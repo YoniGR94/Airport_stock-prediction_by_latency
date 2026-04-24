@@ -1,5 +1,5 @@
 ---
-title: "Airport Stock Prediction git"
+title: "Airport Stock Prediction"
 author: "Yoni"
 date: "`r Sys.Date()`"
 output:
@@ -299,9 +299,9 @@ av_delay_df %>%
   ggplot(aes(x= S_Date, y= av_delay, color= carrier))+
   geom_smooth(se= F, span = 0.09 )+
     labs(
-    title = "avarege latency over Time",
-    x = "av delay",
-    y = "growth",
+    title = "Avarege Latency Over Time",
+    x = "Year",
+    y = "Delay",
     color = "Carrier"
   )+
   geom_vline(xintercept =as.numeric(date("2020-02-01")), linetype=2)+ #add corona line
