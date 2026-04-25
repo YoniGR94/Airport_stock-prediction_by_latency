@@ -228,7 +228,7 @@ all_stock %>%
     "text",
     x = as.Date("2020-02-01") + 150,   #move to the right
     y = max(all_stock$close, na.rm = TRUE) * 0.95,  #near top of chart
-    label = "COVID-19", color = "red", size = 2
+    label = "COVID-19", color = "red", size = 3
   )+
    theme(legend.position="bottom")
 ```
@@ -299,7 +299,7 @@ av_delay_df %>%
   ggplot(aes(x= S_Date, y= av_delay, color= carrier))+
   geom_smooth(se= F, span = 0.09 )+
     labs(
-    title = "Avarege Latency Over Time",
+    title = "Average Delay Over Time",
     x = "Year",
     y = "Delay",
     color = "Carrier"
@@ -309,7 +309,7 @@ av_delay_df %>%
     "text",
     x = as.Date("2020-02-01") + 150,   # move slightly to the right (adjust as needed)
     y = max(av_delay_df$av_delay-15, na.rm = TRUE) * 0.95,  # near top of chart
-    label = "COVID-19", color = "red", size = 2
+    label = "COVID-19", color = "red", size = 3
   )
 ```
 
