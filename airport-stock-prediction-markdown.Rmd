@@ -9,9 +9,7 @@ output:
 ---
 
 # Setup and Data loading
-
-## Libraries
-```{r libraries, warning=F, message=F}
+```{r libraries, warning=F, message=F,include= F}
 library(httr)
 library(readr)
 library(tidyverse)
@@ -44,8 +42,7 @@ delay_data<- delay_data %>%
 , .default = as.character("else")))
 write_csv(delay_data, here("data", "delay_data.csv"))
 ```
-
-```{r read all from API}
+```{r read all from API,include= F}
 #key<- read_csv(paste0(loc_file,"stock_api_key.csv")) %>% unlist()
 #DAL_get<- paste0("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=DAL&apikey=",
 #key,"&datatype=csv") %>% GET()
@@ -64,8 +61,7 @@ write_csv(delay_data, here("data", "delay_data.csv"))
 #LUV_get<- paste0("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=LUV&apikey=",
 #key,"&datatype=csv") %>% GET()
 ```
-
-```{r save api, echo = FALSE}
+```{r save api, echo = FALSE,include= F}
 #writeBin(content(DAL_get, "raw"),here("data", "DAL_month.csv" ))
 #writeBin(content(UAL_get, "raw"),here("data", "UAL_month.csv" ))
 #writeBin(content(JBLU_get,"raw"),here("data", "JBLU_month.csv"))
@@ -76,7 +72,7 @@ write_csv(delay_data, here("data", "delay_data.csv"))
 #writeBin(content(LUV_get, "raw"),here("data", "LUV_month.csv" ))
 ```
 
-```{r import airport CSV stock, message=F, error=F,include= F}
+```{r import airport CSV stock, message=F, error=F,include= T}
 delay_data<- read_csv(here("data", "delay_data.csv")) 
 
 DAL<- read_csv(here("data","DAL_month.csv")) %>%
@@ -592,7 +588,7 @@ summary(model_stock_fixest)
 
 ### Fuel effect
 
-```{r prediction fun simplefy+ fuel}
+```{r prediction fun simplify+ fuel}
 model_fuel_fixest <- feols(
   log(grow_log) ~ av_delay + fuel_del| carrier + month,
   data = av_delay_df,
@@ -624,7 +620,7 @@ av_delay_df_on_time<-
          decade= (year-2000) %/% 10)
 ```
 
-```{r prediction fun on_time simplefy}
+```{r prediction fun on_time simplify}
 model_on_time_fixest <- feols(
   log(grow_log) ~ on_time_pr | carrier + month,
   data = av_delay_df_on_time,
@@ -633,6 +629,9 @@ model_on_time_fixest <- feols(
 
 summary(model_on_time_fixest)
 ```
+
+### add year effect
+
 
 ```{r Time of year+ month}
 model_stock_fixest_ym <- feols(
@@ -688,7 +687,7 @@ names(models)<-   c("fixest_C_M", "fixest_C_M+Fuel", "fixest_C_M on time", "fixe
 modelsummary::modelsummary(models, title = "model 2-6 values")
 ```
 
-first, lets compare the models with a filtered data, that omit the first 3 rows of each carrier in order to compare equal observation compering.
+first, lets compare the models with a filtered data, that omit the first 3 rows of each carrier in order to compare equal observation comparing .
 
 ```{r create without lag}
 model_stock_fixest_rl  <- feols(log(grow_log) ~ av_delay | carrier + month,
@@ -715,7 +714,7 @@ model_stock_fixest_ym_rl <- feols(
 models<- list(model_stock_fixest_rl,model_fuel_fixest_rl,model_on_time_fixest_rl,model_stock_fixest_ym_rl,model_stock_lag3)
 names(models)<-   c("fixest_C_M", "fixest_C_M+Fuel", "fixest_C_M on time", "fixest_C_M_Y", "fixest_C_M lag3") 
 cat("\n--- Model Comparison (equal sample) ---\n")
-modelsummary::modelsummary(models, title = "models 2-6 lag cpmpare")
+modelsummary::modelsummary(models, title = "models 2-6 lag compare")
 ```
 
 Using the $AIC$ model, the Fixed effect model by carrier, year and month looks to be the better one.

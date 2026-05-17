@@ -13,6 +13,11 @@ While prior research has examined the link between customer satisfaction and fir
 
 The analysis covers eight major U.S. carriers over more than two decades, combining monthly delay records from the Bureau of Transportation Statistics (BTS) with monthly stock price data from Alpha Vantage.
 
+# Key Results
+
+| Model | Effect of +1 min delay | p-value | R² |
+|---|---|---|---|
+| FE Month Year Carrier | −0.27% monthly return | < 0.003 | ~0.5% |
 ---
 
 ## Research Question
@@ -146,4 +151,4 @@ The findings are relevant beyond aviation. Any industry where service quality ca
 
 **Yonatan Gathon**  
 M.Sc. Engineering and Management, Business Analytics  
-Submitted: November 2025
+Submitted
