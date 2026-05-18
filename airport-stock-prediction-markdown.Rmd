@@ -8,13 +8,14 @@ output:
     theme: united
 ---
 
-# Setup and Data loading
+# Setup and Data Loading
 ```{r libraries, warning=F, message=F,include= F}
 library(httr)
 library(readr)
 library(tidyverse)
 library(fixest)
 library(here)
+library(gt)
 set.seed(42)
 ```
 
@@ -23,7 +24,7 @@ and the [Bureau of Transportation Statistics (BTS)](https://www.transtats.bts.go
 for of all carriers' monthly delay data.
 fuel data from [Fred](https://fred.stlouisfed.org/series/WJFUELUSGULF#)
 
-## Import data
+## Import Data
 ```{r import data, warning=F, message=F,include= F}
 loc_file<- "D:/for_Git_repository/Airport_stock/"
 delay_data <- read_csv(here("data", "Airline_Delay_Cause_26.csv")) %>%
@@ -98,9 +99,9 @@ carrier_names<-  read_csv(here("data","Airline_Delay_Cause_26.csv")) %>%
   arrange(carrier)
 ```
 
-# Data handeling
+# Data Handeling
 
-## Data cleaning
+## Data Cleaning
 
 ```{r read airport CSV stock, message=F, error=F,include= F}
 fuel_df<- read_csv(here("data","jet_fuel_data.csv")) %>% 
@@ -171,7 +172,7 @@ av_delay_df %>%
 ```{r}
 modelsummary::datasummary_skim(av_delay_df)
 ```
-## correlation graphs
+### Correlation Graphs
 
 ```{r ally, message=F, error=F}
 av_delay_df %>%
@@ -252,7 +253,7 @@ select(airport,carrier,year, month, arr_delay, arr_flights) %>%
   select(-arr_delay,-arr_flights)
 ```
 
-```{r by month graphs, message=F, error=F}
+```{r by month graphs, message=F, error=F,include= T}
 av_delay_df %>%
   ggplot(aes(x= factor(month), y= grow, fill= factor(month)))+
   geom_violin(alpha= 0.4, draw_quantiles = 0.5)+
@@ -263,7 +264,7 @@ av_delay_df %>%
     color = "Carrier"
   )
 
-av_delay_df %>%
+Grow_Month_Year<- av_delay_df %>%
   group_by(year, month) %>%
   summarise(
     mean_grow = mean(grow, na.rm = TRUE),
@@ -288,6 +289,8 @@ av_delay_df %>%
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
+Grow_Month_Year
+ggsave("graphs/Grow_Month_Year.png", plot = Grow_Month_Year, dpi = 600)
 ```
 
 ```{r try visual lm, message=F, error=F}
@@ -451,7 +454,7 @@ delay_share <- delay_long %>%
 ```
 
 ```{r plot reason}
-ggplot(delay_share,
+Delay_Composition_by_Airline<- ggplot(delay_share,
        aes(x = Share,
            y = carrier,
            fill = Reason)) +
@@ -465,6 +468,10 @@ ggplot(delay_share,
   ) +
   theme_minimal()+
 theme(panel.grid = element_line(color = "grey30"))
+
+Delay_Composition_by_Airline
+ggsave("graphs/Delay_Composition_by_Airline.png", plot = Delay_Composition_by_Airline, dpi = 600)
+
 ```
 
 ```{r plot reason 2}
@@ -512,7 +519,6 @@ summary(glm_stock_simple)
 glm_stock_simple %>% plot()
 ```
 
-
 ```{r pred vs reality}
 pred_simple <- tibble::tibble(
   prediction = exp(fitted(glm_stock_simple)),
@@ -550,7 +556,7 @@ ggplot(aes(x = Date, y = pred_delta)) +
   theme_minimal()
 ```
 
-## Main model's stability test
+## Main Model's Stability Test
 
 ```{r heteroskedasticity test}
 lmtest::bptest(glm_stock_simple)
@@ -584,9 +590,9 @@ model_stock_fixest <- feols(
 summary(model_stock_fixest)
 ```
 
-## Alternative models
+## Alternative Models
 
-### Fuel effect
+### Fuel Effect
 
 ```{r prediction fun simplify+ fuel}
 model_fuel_fixest <- feols(
@@ -599,7 +605,7 @@ summary(model_fuel_fixest)
 ```
 
 
-### On Time instead of late
+### On Time Instead of Late
 
 ```{r coock "on_time" percent}
 av_delay_df_on_time<-
@@ -630,7 +636,7 @@ model_on_time_fixest <- feols(
 summary(model_on_time_fixest)
 ```
 
-### add year effect
+### Add Year Effect
 
 
 ```{r Time of year+ month}
@@ -643,7 +649,7 @@ model_stock_fixest_ym <- feols(
 summary(model_stock_fixest_ym)
 ```
 
-### lag model
+### Lag Model
 
 ```{r prediction fun with lag 3}
 lag_data <- av_delay_df %>%
@@ -723,4 +729,10 @@ the final model (without lag obsservation omiting)
 ```{r}
 summary(model_stock_fixest_ym)
 ```
+```{r print gt, warning=F, message=F,include= F}
+tab <- modelsummary::modelsummary(model_stock_fixest_ym,
+             title = "FE Year Month & Carrier",
+             output = "gt")
 
+gtsave(tab, "graphs/final_5_FE_table.png")
+```

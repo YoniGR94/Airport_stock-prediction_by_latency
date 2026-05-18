@@ -13,7 +13,7 @@ While prior research has examined the link between customer satisfaction and fir
 
 The analysis covers eight major U.S. carriers over more than two decades, combining monthly delay records from the Bureau of Transportation Statistics (BTS) with monthly stock price data from Alpha Vantage.
 
-# Key Results
+## Key Results
 
 | Model | Effect of +1 min delay | p-value | R² |
 |---|---|---|---|
