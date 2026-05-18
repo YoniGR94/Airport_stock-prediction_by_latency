@@ -13,12 +13,33 @@ While prior research has examined the link between customer satisfaction and fir
 
 The analysis covers eight major U.S. carriers over more than two decades, combining monthly delay records from the Bureau of Transportation Statistics (BTS) with monthly stock price data from Alpha Vantage.
 
-## Key Results
 
-| Model | Effect of +1 min delay | p-value | R² |
-|---|---|---|---|
-| FE Month Year Carrier | −0.27% monthly return | < 0.003 | ~0.5% |
 ---
+
+## Key Finding
+
+The preferred model (Model 5, FE with carrier, month, and year fixed effects) finds:
+
+> **Each additional minute of average flight delay is associated with approximately a 0.27% decrease in the carrier's stock value within the same month** (statistically significant at p < 0.003).
+
+This result is consistent in sign and direction across all six model specifications, supporting robustness of the central finding. The effect size is modest relative to broader market forces, which is expected — a single operational metric is unlikely to explain a large share of short-term return variance.
+
+<img src="https://github.com/YoniGR94/Airport_stock-prediction_by_latency/blob/main/graphs/final_5_FE_table.png?raw=true" width="170"/>
+
+
+Notable auxiliary findings:
+
+most of latency time is due to carrier or airport delays
+
+<img src="https://github.com/YoniGR94/Airport_stock-prediction_by_latency/blob/main/graphs/Delay_Composition_by_Airline.png?raw=true" width="700"/>
+
+
+it is hard to visually see a pattern in stock grow using time factor only
+
+<img src="https://github.com/YoniGR94/Airport_stock-prediction_by_latency/blob/main/graphs/Grow_Month_Year.png?raw=true" width="700"/>
+
+---
+
 
 ## Research Question
 
@@ -49,7 +70,8 @@ The analysis covers eight major U.S. carriers over more than two decades, combin
 | HA | Hawaiian Airlines |
 | ULCC | Frontier Airlines |
 
-Spirit Airlines was excluded due to its bankruptcy filings in 2023 and 2025, which introduce confounding effects unrelated to service quality.
+Spirit Airlines was excluded due to its bankruptcy filings in 2023 and 2025,
+which introduce confounding effects unrelated to service quality.
 
 ---
 
@@ -78,22 +100,6 @@ Six model specifications were estimated and compared using AIC:
 
 Heteroskedasticity was detected via Breusch-Pagan test (BP = 63.01, p < 0.001). All models use heteroskedasticity-robust standard errors clustered at the carrier level. VIF values were all below 2, ruling out multicollinearity concerns.
 
----
-
-## Key Finding
-
-The preferred model (Model 5, FE with carrier, month, and year fixed effects) finds:
-
-> **Each additional minute of average flight delay is associated with approximately a 0.27% decrease in the carrier's stock value within the same month** (statistically significant at p < 0.003).
-
-This result is consistent in sign and direction across all six model specifications, supporting robustness of the central finding. The effect size is modest relative to broader market forces, which is expected — a single operational metric is unlikely to explain a large share of short-term return variance.
-
-Notable auxiliary findings:
-- Fuel price changes did not show a significant effect when focusing on domestic U.S. routes within a single country (as expected — fuel costs affect all carriers symmetrically in this context).
-- The on-time percentage variant (Model 4) confirms the finding from the opposite direction: a 1 percentage point increase in on-time arrivals is associated with approximately a 0.21% increase in monthly returns.
-- Lagged delay effects (Model 6) were largely insignificant, suggesting the market reacts to delays contemporaneously rather than with a delayed signal.
-
----
 
 ## Repository Structure
 
@@ -107,6 +113,7 @@ Notable auxiliary findings:
 │   ├── ... (one file per carrier)
 │   ├── jet_fuel_data.csv             # FRED jet fuel prices
 │   └── av_delay_df_ex.csv            # Sample of merged dataset
+├── grahps/                           # some of the graphs photos
 ├── airport_stock_prediction_markdown.Rmd   # Full analysis notebook
 └── README.md
 ```
@@ -115,40 +122,25 @@ Notable auxiliary findings:
 
 ---
 
-## Requirements
-
-```r
-library(tidyverse)
-library(fixest)
-library(httr)
-library(readr)
-library(lmtest)      # Breusch-Pagan test
-library(car)         # VIF
-library(modelsummary)
-library(GGally)
-library(here)
-```
-
----
 
 ## Limitations
 
-- **Monthly resolution:** Stock trading and investor reactions occur at daily or even intraday frequency. A monthly delay average may smooth out sharp signals that dissipate within days.
-- **Carrier expectations:** Investors and passengers may hold different delay tolerance thresholds for legacy carriers vs. low-cost operators, an effect that carrier fixed effects only partially absorb.
-- **Flight-level vs. passenger-level delays:** The dataset weights all flights equally regardless of aircraft size, which may not reflect the public's exposure to delays (measured in passengers affected).
-- **Unobserved media coverage:** Delays that receive significant press coverage likely have a larger market impact than those that do not. This channel is not captured in the model.
-- **Structural breaks:** Events like the COVID-19 pandemic (February 2020) and the 2008 financial crisis introduce discontinuities. These are partially absorbed by year fixed effects, but individual carriers recovered very differently from these shocks.
-
+- **Monthly resolution:** Stock trading and investor reactions occur at daily frequency.
+- **Carrier expectations:** Investors and passengers may hold different delay tolerance thresholds for different carriers.
+- **Flight-level vs. passenger-level delays:** The dataset weights all flights equally regardless of aircraft size.
+- **Bigger reasons:** some factors might effect the stock more than the latency: price, safety, geographic coverage.
 ---
 
 ## Broader Implications
 
-The findings are relevant beyond aviation. Any industry where service quality can be measured by an objective, publicly available timeliness metric — logistics and parcel delivery, public transit operators, hospital emergency waiting times — may exhibit a similar relationship between operational performance and market valuation.
+The findings are relevant beyond aviation. Any industry where service quality can be measured by an objective,
+publicly available timeliness metric — logistics and parcel delivery, public transit operators, hospital emergency waiting times 
+— may exhibit a similar relationship between operational performance and market valuation.
 
 ---
 
 ## Author
 
-**Yonatan Gathon**  
+**Yonatan Getahon**  
 M.Sc. Engineering and Management, Business Analytics  
 Submitted
