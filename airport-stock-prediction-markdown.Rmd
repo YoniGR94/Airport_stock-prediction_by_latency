@@ -22,7 +22,8 @@ set.seed(42)
 I use [Alphavantage](https://www.alphavantage.co/documentation/) site for stock monthly information API query:
 and the [Bureau of Transportation Statistics (BTS)](https://www.transtats.bts.gov/OT_Delay/OT_DelayCause1.asp) 
 for of all carriers' monthly delay data.
-fuel data from [Fred](https://fred.stlouisfed.org/series/WJFUELUSGULF#)
+
+The fuel data is from [Fred](https://fred.stlouisfed.org/series/WJFUELUSGULF#)
 
 ## Import Data
 ```{r import data, warning=F, message=F,echo= F}
@@ -98,7 +99,7 @@ carrier_names<-  read_csv(here("data","Airline_Delay_Cause_26.csv")) %>%
   arrange(carrier)
 ```
 
-# Data Handeling
+# Data Handling
 
 ## Data Cleaning
 
@@ -111,7 +112,6 @@ fuel_df<- read_csv(here("data","jet_fuel_data.csv")) %>%
   mutate(fuel_del = (Fuel_price / lag(Fuel_price) - 1)) %>% 
   select(-observation_date )
 ```
-
 ```{r choose carier, message=F, error=F,include= F}
 read_csv(here("data","Airline_Delay_Cause_26.csv"))%>% 
   select(carrier,arr_flights) %>% 
@@ -120,7 +120,6 @@ read_csv(here("data","Airline_Delay_Cause_26.csv"))%>%
   arrange(desc(total_flights)) %>% 
   ungroup() %>% left_join(carrier_names )
 ```
-
 ```{r create stock data & preview}
 all_stock<- bind_rows(DAL,UAL,JBLU,AAL,ALK, HA, ULCC,LUV) %>% 
   rename(S_Date= timestamp) %>% 
@@ -156,7 +155,10 @@ av_delay_df<-
 av_delay_df %>% slice_sample(n=6) %>% write_csv(here("data","av_delay_df_ex.csv"))
 ```
 
-I use $\frac{close}{open}$, which will later be ued in log model, due to the advantages of a logarithmic model in predicting percentage change.
+The dependent variable "grow_log" captures intra-month price movement, rather than a traditional month-over-month return. This reduces noise from carry-over effects between months, at the cost of not capturing the full calendar-month return investors experience.
+
+I use $\frac{close}{open}$, which will later be used in log model, due to the advantages of a logarithmic model in predicting percentage change.
+
 
 ### Data dates panel:
 
@@ -172,10 +174,17 @@ av_delay_df %>%
 
 # Exploratory Data Analysis (EDA)
 
+### preview
+
+Here is a preview of the structure of each of the variables in the data
+
 ```{r}
 modelsummary::datasummary_skim(av_delay_df)
 ```
+
 ### Correlation Graphs
+
+here is a correlation table of the main numeric variables. some have obvious correlation like the open and close of the same date and firm.
 
 ```{r ally, message=F, error=F}
 av_delay_df %>%
@@ -185,6 +194,7 @@ GGally::ggpairs()
 ```
 
 ### Growth Correlation
+
 ```{r growth correlation, message=F, error=F,echo= F}
 monthly_growth <- all_stock %>%
   mutate(growth = (close - open) / open) %>% 
@@ -324,6 +334,7 @@ av_delay_df %>%
     label = "COVID-19", color = "red", size = 3
   )
 ```
+We can see that the 2020 change not only the delays, but also the variance of the delays.
 
 ### Average fuel price as a predictor of the stock growth
 
@@ -339,6 +350,8 @@ av_delay_df %>%
     )+
   theme(panel.grid = element_line(color = "grey70"))
 ```
+
+It seems like there is no clear correlation, at least not without variables handling
 
 ### LM by carrier
 
@@ -757,5 +770,5 @@ tab <- modelsummary::modelsummary(model_stock_fixest_ym,
              title = "FE Year Month & Carrier",
              output = "gt")
 
-gtsave(tab, "graphs/final_5_FE_table.png")
+#gtsave(tab, "graphs/final_5_FE_table.png")
 ```
