@@ -26,7 +26,6 @@ fuel data from [Fred](https://fred.stlouisfed.org/series/WJFUELUSGULF#)
 
 ## Import Data
 ```{r import data, warning=F, message=F,include= F}
-loc_file<- "D:/for_Git_repository/Airport_stock/"
 delay_data <- read_csv(here("data", "Airline_Delay_Cause_26.csv")) %>%
   filter(carrier %in% c("B6","DL","AS","HA", "F9", "AA", "UA","WN"))
 
@@ -44,7 +43,7 @@ delay_data<- delay_data %>%
 write_csv(delay_data, here("data", "delay_data.csv"))
 ```
 ```{r read all from API,include= F}
-#key<- read_csv(paste0(loc_file,"stock_api_key.csv")) %>% unlist()
+#key<- read_csv(paste0("D:/for_Git_repository/Airport_stock/","stock_api_key.csv")) %>% unlist()
 #DAL_get<- paste0("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=DAL&apikey=",
 #key,"&datatype=csv") %>% GET()
 #UAL_get<- paste0("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=UAL&apikey=",
@@ -453,7 +452,9 @@ delay_share <- delay_long %>%
   )
 ```
 
-```{r plot reason}
+### Delay composition by airline
+
+```{r plot reason,include= F}
 Delay_Composition_by_Airline<- ggplot(delay_share,
        aes(x = Share,
            y = carrier,
@@ -473,8 +474,9 @@ Delay_Composition_by_Airline
 ggsave("graphs/Delay_Composition_by_Airline.png", plot = Delay_Composition_by_Airline, dpi = 600)
 
 ```
+### Delay composition over time across all carriers
 
-```{r plot reason 2}
+```{r plot reason 2,include= F}
 
 delay_long %>%
   mutate( decade= factor((year-2000) %/% 10) )%>% 

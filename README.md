@@ -14,6 +14,10 @@ While prior research has examined the link between customer satisfaction and fir
 The analysis covers eight major U.S. carriers over more than two decades, combining monthly delay records from the Bureau of Transportation Statistics (BTS) with monthly stock price data from Alpha Vantage.
 
 
+*The full project can be seen here:*
+
+[Project as PDF](https://yonigr94.github.io/Airport_stock-prediction_by_latency/airport-stock-prediction-markdown.html)
+
 ---
 
 ## Key Finding
@@ -113,7 +117,7 @@ Heteroskedasticity was detected via Breusch-Pagan test (BP = 63.01, p < 0.001). 
 │   ├── ... (one file per carrier)
 │   ├── jet_fuel_data.csv             # FRED jet fuel prices
 │   └── av_delay_df_ex.csv            # Sample of merged dataset
-├── grahps/                           # some of the graphs photos
+├── graphs/                           # some of the graphs photos
 ├── airport_stock_prediction_markdown.Rmd   # Full analysis notebook
 └── README.md
 ```
@@ -143,4 +147,3 @@ publicly available timeliness metric — logistics and parcel delivery, public t
 
 **Yonatan Getahon**  
 M.Sc. Engineering and Management, Business Analytics  
-Submitted
