@@ -9,7 +9,7 @@ output:
 ---
 
 # Setup and Data Loading
-```{r libraries, warning=F, message=F,include= F}
+```{r libraries, warning=F, message=F,echo= F}
 library(httr)
 library(readr)
 library(tidyverse)
@@ -25,7 +25,7 @@ for of all carriers' monthly delay data.
 fuel data from [Fred](https://fred.stlouisfed.org/series/WJFUELUSGULF#)
 
 ## Import Data
-```{r import data, warning=F, message=F,include= F}
+```{r import data, warning=F, message=F,echo= F}
 delay_data <- read_csv(here("data", "Airline_Delay_Cause_26.csv")) %>%
   filter(carrier %in% c("B6","DL","AS","HA", "F9", "AA", "UA","WN"))
 
@@ -156,7 +156,9 @@ av_delay_df<-
 av_delay_df %>% slice_sample(n=6) %>% write_csv(here("data","av_delay_df_ex.csv"))
 ```
 
-```{r panel data}
+### Data dates panel:
+
+```{r panel data,echo= F}
 av_delay_df %>%
   group_by(carrier) %>%
   summarise(
@@ -181,7 +183,7 @@ GGally::ggpairs()
 ```
 
 ### Growth Correlation
-```{r growth correlation, message=F, error=F,include= F}
+```{r growth correlation, message=F, error=F,echo= F}
 monthly_growth <- all_stock %>%
   mutate(growth = (close - open) / open) %>% 
   group_by(Carrier, year, month) %>%
@@ -205,7 +207,9 @@ cor(
 
 ### data density
 
-```{r graph time corona, message=F, error=F}
+Stock value at close over time and the effect of COVID-19
+
+```{r graph time corona, message=F, warning=F, echo= F}
 all_stock %>%
   filter(S_Date>= "2002-01-01") %>% 
   ggplot(aes(x= S_Date, y= close, color= Carrier))+
@@ -252,7 +256,9 @@ select(airport,carrier,year, month, arr_delay, arr_flights) %>%
   select(-arr_delay,-arr_flights)
 ```
 
-```{r by month graphs, message=F, error=F,include= T}
+### stock growth by month
+
+```{r Stock Growth by Month, message=F, warning=F,echo= F}
 av_delay_df %>%
   ggplot(aes(x= factor(month), y= grow, fill= factor(month)))+
   geom_violin(alpha= 0.4, draw_quantiles = 0.5)+
@@ -262,7 +268,11 @@ av_delay_df %>%
     y = "growth",
     color = "Carrier"
   )
+```
 
+### Average stock grow by month and year as pixel graph
+
+```{r Average Grow by Month and Year, message=F, warning=F,echo= F}
 Grow_Month_Year<- av_delay_df %>%
   group_by(year, month) %>%
   summarise(
@@ -271,13 +281,11 @@ Grow_Month_Year<- av_delay_df %>%
   ) %>% 
   ggplot(aes(x = factor(year), y = factor(month), fill = mean_grow)) +
   geom_tile(color = "white") +
-  #scale_fill_viridis_c(option = "plasma") +
   scale_fill_gradient2(
-    low  = "red4",    # ערכים שליליים
-    mid  = "grey70",  # אפס (או המרכז)
-    high = "green4",  # ערכים חיוביים
-    midpoint = 0
-  )+
+    low  = "red4",
+    mid  = "grey70",
+    high = "green4",
+    midpoint = 0)+
   labs(
     title = "Average Grow by Month and Year",
     x = "Year",
@@ -292,7 +300,9 @@ Grow_Month_Year
 ggsave("graphs/Grow_Month_Year.png", plot = Grow_Month_Year, dpi = 600)
 ```
 
-```{r try visual lm, message=F, error=F}
+### Average delay over time and the COVID-19 effect
+
+```{r try visual lm, message=F, warning=F, echo= F}
 av_delay_df %>%
   ggplot(aes(x= S_Date, y= av_delay, color= carrier))+
   geom_smooth(se= F, span = 0.09 )+
@@ -311,13 +321,15 @@ av_delay_df %>%
   )
 ```
 
-```{r, message=F, error=F}
+### Average fuel price as a predictor of the stock growth
+
+```{r, message=F, warning=F, echo= F}
 av_delay_df %>%
   ggplot(aes(x= Fuel_price, y= grow))+
   geom_point(alpha= 0.8, aes(color= carrier))+
   geom_smooth(se= F, color= "grey30")+
     labs(
-    title = "avarege fuel price vs Stock growth",
+    title = "Average Fuel Price vs Stock Growth",
     x = "fuel price",
     y = "growth"
     )+
@@ -361,7 +373,7 @@ lm_carrier_table
 #lm_carrier_table %>% write_csv(here("data","Carrier_pred.csv"))
 ```
 
-```{r, message=F, error=F}
+```{r, message=F, warning=F}
 long_df <- av_delay_df %>%
   select(S_Date, Fuel_price, close) %>%
   mutate(Fuel_price= Fuel_price) %>% 
@@ -370,7 +382,9 @@ long_df <- av_delay_df %>%
                values_to = "close")
 ```
 
-```{r Fuel Price and Growth over Time, message=F, error=F}
+### Fuel price and stocks growth waves over time
+
+```{r Fuel Price and Growth over Time, message=F, warning=F, echo= F}
 long_df %>%
   ggplot(aes(x = S_Date, y = close, color = variable)) +
   geom_point(alpha = 0.5)+
@@ -383,8 +397,9 @@ long_df %>%
   )+
     theme(legend.position = "bottom")+ facet_wrap(~variable, nrow= 2, scales= "free_y")
 ```
+### Distribution of monthly stock returns
 
-```{r late hist, message=F, error=F}
+```{r late hist, message=F, warning= F}
 ggplot(av_delay_df, aes(x = grow_log,fill= carrier)) +
   geom_density(bins = 40,alpha = 0.8) +
   facet_wrap(~carrier, nrow= 2)+
@@ -395,7 +410,7 @@ ggplot(av_delay_df, aes(x = grow_log,fill= carrier)) +
   )
 ```
 
-```{r late dencity pro, message=F, error=F}
+```{r late dencity pro, message=F, warning=F}
 mean_df <- av_delay_df %>%
   group_by(carrier) %>%
   summarise(mean_delay = mean(av_delay, na.rm = TRUE),
@@ -454,7 +469,7 @@ delay_share <- delay_long %>%
 
 ### Delay composition by airline
 
-```{r plot reason,include= F}
+```{r plot reason,echo= F}
 Delay_Composition_by_Airline<- ggplot(delay_share,
        aes(x = Share,
            y = carrier,
@@ -476,7 +491,7 @@ ggsave("graphs/Delay_Composition_by_Airline.png", plot = Delay_Composition_by_Ai
 ```
 ### Delay composition over time across all carriers
 
-```{r plot reason 2,include= F}
+```{r plot reason 2,echo= F}
 
 delay_long %>%
   mutate( decade= factor((year-2000) %/% 10) )%>% 
@@ -731,7 +746,7 @@ the final model (without lag obsservation omiting)
 ```{r}
 summary(model_stock_fixest_ym)
 ```
-```{r print gt, warning=F, message=F,include= F}
+```{r print gt, warning=F, message=F,echo= F}
 tab <- modelsummary::modelsummary(model_stock_fixest_ym,
              title = "FE Year Month & Carrier",
              output = "gt")
