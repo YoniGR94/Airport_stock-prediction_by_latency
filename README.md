@@ -1,4 +1,4 @@
-# Airline Delays and Stock Returns
+# Airport Stock Prediction by Latency
 
 **Can operational performance predict airline stock value?**  
 A panel data study of U.S. domestic carriers, 2003–2025.
@@ -16,7 +16,7 @@ The analysis covers eight major U.S. carriers over more than two decades, combin
 
 *The full project can be seen here:*
 
-[Project as PDF](https://yonigr94.github.io/Airport_stock-prediction_by_latency/airport-stock-prediction-markdown.html)
+[Project as HTML](https://yonigr94.github.io/Airport_stock-prediction_by_latency/airport-stock-prediction-markdown.html)
 
 ---
 
@@ -133,6 +133,7 @@ Heteroskedasticity was detected via Breusch-Pagan test (BP = 63.01, p < 0.001). 
 - **Carrier expectations:** Investors and passengers may hold different delay tolerance thresholds for different carriers.
 - **Flight-level vs. passenger-level delays:** The dataset weights all flights equally regardless of aircraft size.
 - **Bigger reasons:** some factors might effect the stock more than the latency: price, safety, geographic coverage.
+- **Sample size:** number of carriers is 8, lower than usually used in FE models.
 ---
 
 ## Broader Implications

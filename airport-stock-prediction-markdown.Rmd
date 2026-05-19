@@ -1,6 +1,6 @@
 ---
-title: "Airport Stock Prediction"
-author: "Yoni"
+title: "Airport Stock Prediction by Latency"
+author: "Yoni Getahon"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -156,6 +156,8 @@ av_delay_df<-
 av_delay_df %>% slice_sample(n=6) %>% write_csv(here("data","av_delay_df_ex.csv"))
 ```
 
+I use $\frac{close}{open}$, which will later be ued in log model, due to the advantages of a logarithmic model in predicting percentage change.
+
 ### Data dates panel:
 
 ```{r panel data,echo= F}
@@ -205,7 +207,7 @@ cor(
   as.data.frame()
 ```
 
-### data density
+### Data Density
 
 Stock value at close over time and the effect of COVID-19
 
@@ -232,6 +234,8 @@ all_stock %>%
   )+
    theme(legend.position="bottom")
 ```
+
+### Predicting grow by year with month and carrier effect
 
 ```{r averege grow, message=F, error=F}
 feols(
@@ -373,7 +377,7 @@ lm_carrier_table
 #lm_carrier_table %>% write_csv(here("data","Carrier_pred.csv"))
 ```
 
-```{r, message=F, warning=F}
+```{r create long pivot data, message=F, warning=F}
 long_df <- av_delay_df %>%
   select(S_Date, Fuel_price, close) %>%
   mutate(Fuel_price= Fuel_price) %>% 
@@ -489,6 +493,7 @@ Delay_Composition_by_Airline
 ggsave("graphs/Delay_Composition_by_Airline.png", plot = Delay_Composition_by_Airline, dpi = 600)
 
 ```
+
 ### Delay composition over time across all carriers
 
 ```{r plot reason 2,echo= F}
@@ -642,6 +647,7 @@ av_delay_df_on_time<-
          post_corona= (year>= 2020 & month>= 3) | year>= 2021,
          decade= (year-2000) %/% 10)
 ```
+
 
 ```{r prediction fun on_time simplify}
 model_on_time_fixest <- feols(
